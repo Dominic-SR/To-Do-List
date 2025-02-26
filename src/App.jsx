@@ -1,35 +1,100 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState,useEffect } from "react";
+import { MdDelete } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
+import { MdOutlineDoneOutline } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  
+  const [tasks, setTasks] = useState([]);
+  const [input, setInput] = useState("");
+
+  const addTask = () => {
+    if (input.trim() === "") return;
+    setTasks([...tasks, { text: input, completed: false }]);
+    setInput("");
+  };
+
+  const toggleTask = (index) => {
+    const newTasks = tasks.map((task, i) =>
+      i === index ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(newTasks);
+  };
+
+  const deleteTask = (index) => {
+    setTasks(tasks.filter((_, i) => i !== index));
+  };
+
+  const editTask = (index) =>{
+    // console.log(tasks.find((_,i) => i == index).text); 
+    setInput(tasks.find((_,i) => i == index).text)
+  }
+
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className="main-container">
+      <div className="box-container">
+      <h2 className="title">To Do List</h2>
+      
+      <div className="task-input-container">
+        <input
+          type="text"
+          className="form-control"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button
+          className="primary-button"
+          onClick={addTask}
+        >
+          Add
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      <ul className="task-listing">
+      <h2 className="title">Pending List</h2>
+        {tasks.map((task, index) => 
+          !task.completed && (
+          <li
+            key={index}
+          >
+            <span>
+              {task.text}
+            </span>
+            <div className="button-row-container">
+            <MdOutlineDoneOutline onClick={() => toggleTask(index)} />
+            <FaEdit onClick={() => editTask(index)}/>
+            <MdDelete onClick={() => deleteTask(index)} />
+            </div>
+          </li>
+        ))}
+      </ul>
+        
+       
+      <ul className="task-listing">
+      <h2 className="title">Completed List</h2>
+        {tasks.map((task, index) => 
+          task.completed && (
+          <li
+            key={index}
+          >
+            <span onClick={() => toggleTask(index)} className="cursor-pointer">
+              {task.text}
+            </span>
+            <div className="button-row-container">
+            <MdCancel onClick={() => toggleTask(index)} />
+            <MdDelete onClick={() => deleteTask(index)} />
+            </div>
+          </li>
+          )
+        )}
+      </ul>
+
+      </div>
+    </div>
   )
 }
 
 export default App
+
