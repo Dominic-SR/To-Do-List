@@ -1,12 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
 
-export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
+const Sidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
   const location = useLocation()
 
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard', icon: '📊' },
-    { name: 'Home', path: '/', icon: '📈' },
-    { name: 'Settings', path: '/dashboard/settings', icon: '⚙️' },
+    { name: 'Tasks', path: '/Tasks', icon: '☑️' },
+    { name: 'Expenses', path: '/Expenses', icon: '💰' },
+    { name: 'Settings', path: '/settings', icon: '⚙️' },
   ]
 
   return (
@@ -35,13 +36,13 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
               isCollapsed ? 'md:hidden' : 'block'
             }`}
           >
-            AppPanel
+            ✅Day Checker 
           </Link>
 
           {/* Desktop Collapse / Expand Toggle Button */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden md:flex items-center justify-center p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
+            className="hidden cursor-pointer md:flex items-center justify-center p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {isCollapsed ? '➡️' : '⬅️'}
@@ -105,3 +106,5 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed
     </>
   )
 }
+
+export default Sidebar;
