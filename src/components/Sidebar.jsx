@@ -1,13 +1,25 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { googleLogout } from '@react-oauth/google'
+import { useAuth } from '../utils/context/AuthContext'
 
 const Sidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { logout } = useAuth()
+
+  const handleLogout = () => {
+    googleLogout()
+    logout()
+    setIsOpen(false)
+    navigate('/login', { replace: true })
+  }
 
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard', icon: '📊' },
-    { name: 'Tasks', path: '/Tasks', icon: '☑️' },
-    { name: 'Expenses', path: '/Expenses', icon: '💰' },
+    { name: 'Tasks', path: '/tasks', icon: '☑️' },
+    { name: 'Expenses', path: '/expenses', icon: '💰' },
     { name: 'Settings', path: '/settings', icon: '⚙️' },
+    { name: 'Logout', path: '/login', icon: '📤', action: handleLogout }
   ]
 
   return (
@@ -61,6 +73,25 @@ const Sidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
         <div className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path
+            if (link.action) {
+              return (
+                <button
+                  key={link.name}
+                  type="button"
+                  onClick={link.action}
+                  title={isCollapsed ? link.name : ''}
+                  className={`w-full text-left flex items-center gap-3 px-3 py-3 rounded-lg font-medium transition-colors ${
+                    'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <span className="text-xl flex-shrink-0">{link.icon}</span>
+                  <span className={`transition-opacity duration-200 ${isCollapsed ? 'md:hidden' : 'block'}`}>
+                    {link.name}
+                  </span>
+                </button>
+              )
+            }
+
             return (
               <Link
                 key={link.path}

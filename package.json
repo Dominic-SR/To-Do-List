@@ -14,6 +14,8 @@
     "@ckeditor/ckeditor5-react": "^11.2.0",
     "@react-oauth/google": "^0.13.5",
     "@tailwindcss/vite": "^4.3.3",
+    "dotenv": "^17.4.2",
+    "gapi-script": "^1.2.0",
     "jwt-decode": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

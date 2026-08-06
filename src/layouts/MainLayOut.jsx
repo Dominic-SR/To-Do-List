@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import { useAuth } from '../utils/context/AuthContext'
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false) // Mobile open/close state
   const [isCollapsed, setIsCollapsed] = useState(false) // Desktop collapse/expand state
-
+  const { user } = useAuth() // Get user from Auth Context
+console.log('Authenticated user:', user.name) // Debugging: Log the authenticated user
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
       {/* Sidebar Menu with passed states */}
@@ -32,12 +34,12 @@ export default function DashboardLayout() {
           </button>
           
           <div className="text-sm font-semibold text-slate-800">
-            Welcome back, User 👋
+            Welcome back, {user.name} 👋
           </div>
 
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
-              U
+              {user.name.charAt(0).toUpperCase()}
             </div>
           </div>
         </header>
