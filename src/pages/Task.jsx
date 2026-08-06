@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import SheetUpdate from '../utils/helper/SheetUpdate'
 
 const Task = () => {
   const [title, setTitle] = useState('')
@@ -30,7 +31,7 @@ const Task = () => {
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid gap-6 sm:grid-cols-2">
-            <div>
+            <div className="sm:col-span-2">
               <label htmlFor="task-title" className="mb-2 block text-sm font-medium text-slate-700">
                 Task Title
               </label>
@@ -105,6 +106,8 @@ const Task = () => {
             </ul>
           )}
         </div>
+
+        <SheetUpdate />
       </div>
     </div>
   )
