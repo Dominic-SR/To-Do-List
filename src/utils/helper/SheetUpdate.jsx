@@ -283,7 +283,7 @@ export default function SheetUpdate() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 bg-slate-900 text-white rounded-2xl border border-slate-800">
+    <div className="flex flex-col items-center justify-center p-8 text-white ">
       
       <button
         onClick={() => {
