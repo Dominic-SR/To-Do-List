@@ -284,7 +284,7 @@ export default function SheetUpdate() {
 
   return (
     <div className="flex flex-col items-center justify-center p-8 bg-slate-900 text-white rounded-2xl border border-slate-800">
-      <h2 className="text-xl font-bold mb-2">Export Colored 10x10 Sheet with Charts</h2>
+      
       <button
         onClick={() => {
           setLoading(true);
