@@ -88,6 +88,3 @@ Contributions are welcome. Suggested workflow:
 
 This project is provided under the MIT License; see the `LICENSE` file.
 
----
-
-If you'd like, I can also add badges, usage screenshots, or a short CONTRIBUTING.md. Want any of those added now?
