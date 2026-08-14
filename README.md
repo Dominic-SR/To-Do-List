@@ -65,26 +65,3 @@ Run tests:
 npm install
 npm test
 ```
-
-Note: If `vitest` is not found, ensure devDependencies were installed and your PATH/Node environment is configured correctly.
-
-## Contributing
-
-Contributions are welcome. Suggested workflow:
-
-1. Fork the repository
-2. Create a new branch for your feature/fix
-3. Run `npm install` and `npm run dev` locally
-4. Add tests where appropriate and run `npm test`
-5. Open a pull request with a clear description
-
-## File Overview
-
-- `src/pages/Dashboard.jsx` — Main UI and IndexedDB interactions
-- `src/utils/database/db.jsx` — Dexie database schema and export
-- `src/pages/Dashboard.test.jsx` — Vitest tests for dashboard flows
-
-## License
-
-This project is provided under the MIT License; see the `LICENSE` file.
-
