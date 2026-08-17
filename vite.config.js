@@ -10,4 +10,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
   },
+  server:{
+    allowedHosts: ['192.168.43.161.nip.io'],
+    host:true
+  }
 })

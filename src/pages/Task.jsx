@@ -93,9 +93,16 @@ const Task = () => {
                 <li key={task.id} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/50">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-lg font-semibold text-slate-900">{task.title}</h3>
+                   
+                   <div className="flex gap-2">
+                    <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-700 cursor-pointer">🖋️</span>
+
+                    <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-700 cursor-pointer">🗑️</span>
+                    
                     <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-700">
                       ID: {task.id}
                     </span>
+                    </div>
                   </div>
                   <div
                     className="mt-3 text-sm leading-6 text-slate-600"
