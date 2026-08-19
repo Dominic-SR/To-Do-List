@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import SheetUpdate from '../utils/helper/SheetUpdate'
@@ -7,15 +7,47 @@ const Task = () => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [tasks, setTasks] = useState([])
+  const [editingTaskId, setEditingTaskId] = useState(null)
 
   const handleSubmit = (event) => {
     event.preventDefault()
     if (!title.trim() || !description.trim()) return
 
-    setTasks((current) => [
-      ...current,
-      { id: Date.now(), title: title.trim(), description },
-    ])
+    if (editingTaskId !== null) {
+      setTasks((current) => current.map((task) => (
+        task.id === editingTaskId
+          ? { ...task, title: title.trim(), description }
+          : task
+      )))
+    } else {
+      setTasks((current) => [
+        ...current,
+        { id: Date.now(), title: title.trim(), description },
+      ])
+    }
+
+    setEditingTaskId(null)
+    setTitle('')
+    setDescription('')
+  }
+
+  const handleEdit = (task) => {
+    setEditingTaskId(task.id)
+    setTitle(task.title)
+    setDescription(task.description)
+  }
+
+  const handleDelete = (taskId) => {
+    setTasks((current) => current.filter((task) => task.id !== taskId))
+    if (editingTaskId === taskId) {
+      setEditingTaskId(null)
+      setTitle('')
+      setDescription('')
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingTaskId(null)
     setTitle('')
     setDescription('')
   }
@@ -53,6 +85,7 @@ const Task = () => {
                 <CKEditor
                   editor={ClassicEditor}
                   data={description}
+                  key={editingTaskId ?? 'new-task'}
                   onChange={(event, editor) => {
                     const data = editor.getData()
                     setDescription(data)
@@ -67,8 +100,17 @@ const Task = () => {
               type="submit"
               className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
             >
-              Add Task
+              {editingTaskId === null ? 'Add Task' : 'Save Task'}
             </button>
+            {editingTaskId !== null && (
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="inline-flex items-center justify-center rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+            )}
           </div>
         </form>
 
@@ -95,9 +137,23 @@ const Task = () => {
                     <h3 className="text-lg font-semibold text-slate-900">{task.title}</h3>
                    
                    <div className="flex gap-2">
-                    <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-700 cursor-pointer">🖋️</span>
+                    <button
+                      type="button"
+                      aria-label={`Edit ${task.title}`}
+                      onClick={() => handleEdit(task)}
+                      className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-700 transition hover:bg-sky-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    >
+                      Edit
+                    </button>
 
-                    <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-700 cursor-pointer">🗑️</span>
+                    <button
+                      type="button"
+                      aria-label={`Delete ${task.title}`}
+                      onClick={() => handleDelete(task.id)}
+                      className="rounded-full bg-rose-100 px-3 py-1 text-sm font-medium text-rose-700 transition hover:bg-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    >
+                      Delete
+                    </button>
                     
                     <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-700">
                       ID: {task.id}
