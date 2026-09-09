@@ -1,4 +1,4 @@
-const DATABASE_NAME = 'to-do-list-db'
+const DATABASE_NAME = 'TodoListDB'
 const DATABASE_VERSION = 1
 const USERS_STORE = 'users'
 

@@ -3,6 +3,77 @@ import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import SheetUpdate from '../utils/helper/SheetUpdate'
 
+class LocalUploadAdapter {
+  constructor(loader) {
+    this.loader = loader
+  }
+
+  upload() {
+    return this.loader.file.then((file) => new Promise((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = () => resolve({ default: reader.result })
+      reader.onerror = () => reject(new Error('Could not read the selected image.'))
+      reader.readAsDataURL(file)
+    }))
+  }
+
+  abort() {}
+}
+
+function localUploadAdapter(editor) {
+  editor.plugins.get('FileRepository').createUploadAdapter = (loader) => (
+    new LocalUploadAdapter(loader)
+  )
+}
+
+const addDocumentUploadButton = (editor) => {
+  const toolbarItems = editor.ui.view.toolbar.element.querySelector('.ck-toolbar__items')
+  if (!toolbarItems) return
+
+  const button = document.createElement('button')
+  const fileInput = document.createElement('input')
+
+  button.type = 'button'
+  button.className = 'ck ck-button ck-off'
+  button.title = 'Upload document'
+  button.setAttribute('aria-label', 'Upload document')
+  button.innerHTML = '<svg class="ck ck-icon ck-button__icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16V4m0 0L8 8m4-4 4 4M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>'
+
+  fileInput.type = 'file'
+  fileInput.accept = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv'
+  fileInput.hidden = true
+  document.body.appendChild(fileInput)
+  toolbarItems.appendChild(button)
+
+  button.addEventListener('click', () => fileInput.click())
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      const fileName = escapeHtml(file.name)
+      editor.setData(`${editor.getData()}<p><a href="${reader.result}" download="${fileName}">Download ${fileName}</a></p>`)
+      fileInput.value = ''
+    }
+    reader.readAsDataURL(file)
+  })
+
+  editor.on('destroy', () => {
+    button.remove()
+    fileInput.remove()
+  })
+}
+
+const escapeHtml = (value) => value.replace(/[&<>'"]/g, (character) => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  "'": '&#39;',
+  '"': '&quot;',
+}[character]))
+
 const Task = () => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -86,6 +157,14 @@ const Task = () => {
                   editor={ClassicEditor}
                   data={description}
                   key={editingTaskId ?? 'new-task'}
+                  config={{
+                    extraPlugins: [localUploadAdapter],
+                    toolbar: [
+                      'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+                      'imageUpload', 'blockQuote', 'undo', 'redo',
+                    ],
+                  }}
+                  onReady={addDocumentUploadButton}
                   onChange={(event, editor) => {
                     const data = editor.getData()
                     setDescription(data)
@@ -170,7 +249,7 @@ const Task = () => {
           )}
         </div>
 
-        <SheetUpdate />
+        { /*<SheetUpdate /> */}
       </div>
     </div>
   )
