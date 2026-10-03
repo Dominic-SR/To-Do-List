@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import SheetUpdate from '../utils/helper/SheetUpdate'
+import { addTask, deleteTask, getTasks, updateTask } from '../utils/database/authDb'
 
 class LocalUploadAdapter {
   constructor(loader) {
@@ -80,21 +80,37 @@ const Task = () => {
   const [tasks, setTasks] = useState([])
   const [editingTaskId, setEditingTaskId] = useState(null)
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    let isMounted = true
+
+    getTasks().then((savedTasks) => {
+      if (isMounted) setTasks(savedTasks)
+    }).catch((error) => {
+      console.error('Failed to load tasks:', error)
+    })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const handleSubmit = async (event) => {
     event.preventDefault()
     if (!title.trim() || !description.trim()) return
 
     if (editingTaskId !== null) {
+      const updatedTask = tasks.find((task) => task.id === editingTaskId)
+      if (!updatedTask) return
+
+      const savedTask = { ...updatedTask, title: title.trim(), description }
+      await updateTask(savedTask)
       setTasks((current) => current.map((task) => (
-        task.id === editingTaskId
-          ? { ...task, title: title.trim(), description }
-          : task
+        task.id === editingTaskId ? savedTask : task
       )))
     } else {
-      setTasks((current) => [
-        ...current,
-        { id: Date.now(), title: title.trim(), description },
-      ])
+      const newTask = { id: Date.now(), title: title.trim(), description }
+      await addTask(newTask)
+      setTasks((current) => [...current, newTask])
     }
 
     setEditingTaskId(null)
@@ -108,7 +124,8 @@ const Task = () => {
     setDescription(task.description)
   }
 
-  const handleDelete = (taskId) => {
+  const handleDelete = async (taskId) => {
+    await deleteTask(taskId)
     setTasks((current) => current.filter((task) => task.id !== taskId))
     if (editingTaskId === taskId) {
       setEditingTaskId(null)

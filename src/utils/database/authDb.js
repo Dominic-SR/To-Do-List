@@ -1,6 +1,9 @@
+import SHA256 from 'crypto-js/sha256'
+
 const DATABASE_NAME = 'TodoListDB'
-const DATABASE_VERSION = 1
+const DATABASE_VERSION = 2
 const USERS_STORE = 'users'
+const TASKS_STORE = 'tasks'
 
 const openDatabase = () => new Promise((resolve, reject) => {
   const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION)
@@ -11,18 +14,21 @@ const openDatabase = () => new Promise((resolve, reject) => {
       const users = database.createObjectStore(USERS_STORE, { keyPath: 'id', autoIncrement: true })
       users.createIndex('email', 'email', { unique: true })
     }
+    if (!database.objectStoreNames.contains(TASKS_STORE)) {
+      database.createObjectStore(TASKS_STORE, { keyPath: 'id' })
+    }
   }
 
   request.onsuccess = () => resolve(request.result)
   request.onerror = () => reject(request.error)
 })
 
-const withStore = async (mode, operation) => {
+const withStore = async (storeName, mode, operation) => {
   const database = await openDatabase()
 
   return new Promise((resolve, reject) => {
-    const transaction = database.transaction(USERS_STORE, mode)
-    const request = operation(transaction.objectStore(USERS_STORE))
+    const transaction = database.transaction(storeName, mode)
+    const request = operation(transaction.objectStore(storeName))
 
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
@@ -31,13 +37,13 @@ const withStore = async (mode, operation) => {
   })
 }
 
-export const findUserByEmail = (email) => withStore('readonly', (users) => (
+export const findUserByEmail = (email) => withStore(USERS_STORE, 'readonly', (users) => (
   users.index('email').get(email.trim().toLowerCase())
 ))
 
-export const findUserById = (id) => withStore('readonly', (users) => users.get(id))
+export const findUserById = (id) => withStore(USERS_STORE, 'readonly', (users) => users.get(id))
 
-export const createUser = ({ name, email, passwordHash }) => withStore('readwrite', (users) => (
+export const createUser = ({ name, email, passwordHash }) => withStore(USERS_STORE, 'readwrite', (users) => (
   users.add({
     name: name.trim(),
     email: email.trim().toLowerCase(),
@@ -49,7 +55,7 @@ export const createUser = ({ name, email, passwordHash }) => withStore('readwrit
 
 export const saveGoogleUser = async (profile) => {
   const email = profile.email?.trim().toLowerCase()
-  if (!email) return withStore('readwrite', (users) => users.add({ ...profile, provider: 'google' }))
+  if (!email) return withStore(USERS_STORE, 'readwrite', (users) => users.add({ ...profile, provider: 'google' }))
 
   const database = await openDatabase()
   return new Promise((resolve, reject) => {
@@ -74,7 +80,19 @@ export const saveGoogleUser = async (profile) => {
 }
 
 export const hashPassword = async (password) => {
-  const encoded = new TextEncoder().encode(password)
-  const hash = await crypto.subtle.digest('SHA-256', encoded)
-  return Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join('')
+  if (globalThis.crypto?.subtle) {
+    const encoded = new TextEncoder().encode(password)
+    const hash = await globalThis.crypto.subtle.digest('SHA-256', encoded)
+    return Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join('')
+  }
+
+  return SHA256(password).toString()
 }
+
+export const getTasks = () => withStore(TASKS_STORE, 'readonly', (tasks) => tasks.getAll())
+
+export const addTask = (task) => withStore(TASKS_STORE, 'readwrite', (tasks) => tasks.add(task))
+
+export const updateTask = (task) => withStore(TASKS_STORE, 'readwrite', (tasks) => tasks.put(task))
+
+export const deleteTask = (taskId) => withStore(TASKS_STORE, 'readwrite', (tasks) => tasks.delete(taskId))
