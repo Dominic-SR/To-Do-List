@@ -141,8 +141,8 @@ const Task = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 shadow-sm shadow-slate-200/50">
+    <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
+      <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/50 sm:p-8">
         <div className="mb-8 text-center">
           <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Task Manager</p>
           <h1 className="mt-3 text-3xl font-semibold text-slate-900 sm:text-4xl">Create and Track Tasks</h1>
@@ -150,8 +150,8 @@ const Task = () => {
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="sm:col-span-2">
+          <div className="grid min-w-0 gap-6 sm:grid-cols-2">
+            <div className="min-w-0 sm:col-span-2">
               <label htmlFor="task-title" className="mb-2 block text-sm font-medium text-slate-700">
                 Task Title
               </label>
@@ -165,11 +165,11 @@ const Task = () => {
               />
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="min-w-0 sm:col-span-2">
               <label className="mb-2 block text-sm font-medium text-slate-700">
                 Task Description
               </label>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-2 shadow-sm shadow-slate-100">
+              <div className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 p-2 shadow-sm shadow-slate-100">
                 <CKEditor
                   editor={ClassicEditor}
                   data={description}
@@ -191,7 +191,7 @@ const Task = () => {
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex flex-wrap justify-end gap-3">
             <button
               type="submit"
               className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
@@ -210,8 +210,8 @@ const Task = () => {
           </div>
         </form>
 
-        <div className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-6">
-          <div className="mb-6 flex items-center justify-between gap-4">
+        <div className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-4 sm:p-6">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-semibold text-slate-900">Tasks</h2>
               <p className="text-sm text-slate-500">Review your active tasks below.</p>
@@ -228,11 +228,11 @@ const Task = () => {
           ) : (
             <ul className="space-y-4">
               {tasks.map((task) => (
-                <li key={task.id} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/50">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <h3 className="text-lg font-semibold text-slate-900">{task.title}</h3>
-                   
-                   <div className="flex gap-2">
+                <li key={task.id} className="min-w-0 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/50 sm:p-5">
+                  <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+                    <h3 className="min-w-0 break-words text-lg font-semibold text-slate-900">{task.title}</h3>
+
+                    <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                     <button
                       type="button"
                       aria-label={`Edit ${task.title}`}
@@ -251,13 +251,13 @@ const Task = () => {
                       Delete
                     </button>
                     
-                    <span className="rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-700">
+                    <span className="max-w-full break-all rounded-full bg-sky-100 px-3 py-1 text-sm font-medium text-sky-700">
                       ID: {task.id}
                     </span>
                     </div>
                   </div>
                   <div
-                    className="mt-3 text-sm leading-6 text-slate-600"
+                    className="mt-3 min-w-0 break-words text-sm leading-6 text-slate-600 [&_img]:h-auto [&_img]:max-w-full [&_a]:break-all"
                     dangerouslySetInnerHTML={{ __html: task.description }}
                   />
                 </li>

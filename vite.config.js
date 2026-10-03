@@ -2,15 +2,22 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+// import basicSsl from '@vitejs/plugin-basic-ssl' // 1. Import SSL plugin
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), 
-    
+  plugins: [
+    // basicSsl(), // 2. Add basicSsl() first
+    react(), 
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        // Caches all static build assets including dynamically loaded chunks
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2}'],
+        // Force service worker to immediately claim clients so it works on first install
+        clientsClaim: true,
+        skipWaiting: true
       },
       manifest: {
         name: 'My Vite PWA',
@@ -42,3 +49,5 @@ export default defineConfig({
     host:true
   }
 })
+
+
