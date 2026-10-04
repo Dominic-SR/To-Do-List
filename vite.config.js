@@ -11,28 +11,28 @@ export default defineConfig({
     react(), 
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['favicon.svg', 'pwa-icon.svg'],
       workbox: {
-        // Caches all static build assets including dynamically loaded chunks
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2}'],
-        // Force service worker to immediately claim clients so it works on first install
         clientsClaim: true,
-        skipWaiting: true
+        skipWaiting: true,
+        navigateFallback: 'index.html',
       },
       manifest: {
-        name: 'My Vite PWA',
-        short_name: 'VitePWA',
-        theme_color: '#ffffff',
+        name: 'To-Do List',
+        short_name: 'To-Do List',
+        description: 'Create and manage your tasks, even when offline.',
+        start_url: '/',
+        scope: '/',
+        display: 'standalone',
+        background_color: '#f8fafc',
+        theme_color: '#4f46e5',
         icons: [
           {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
+            src: '/pwa-icon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
+            purpose: 'any maskable',
           }
         ]
       }
@@ -49,5 +49,4 @@ export default defineConfig({
     host:true
   }
 })
-
 
