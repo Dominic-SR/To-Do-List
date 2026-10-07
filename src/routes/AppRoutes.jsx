@@ -1,6 +1,6 @@
 // src/routes/AppRoutes.jsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import MainLayout from '../layouts/MainLayout'
+import MainLayout from '../layouts/MainLayOut'
 import Dashboard from '../pages/Dashboard'
 import Task from '../pages/Task'
 import Expenses from '../pages/Expenses'
