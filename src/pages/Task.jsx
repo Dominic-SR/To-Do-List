@@ -210,7 +210,7 @@ const Task = () => {
           </div>
         </form>
 
-        <div className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-4 sm:p-6">
+        {tasks.length !== 0 && (<div className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-4 sm:p-6">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-semibold text-slate-900">Tasks</h2>
@@ -264,7 +264,7 @@ const Task = () => {
               ))}
             </ul>
           )}
-        </div>
+        </div>)}
 
         { /*<SheetUpdate /> */}
       </div>
