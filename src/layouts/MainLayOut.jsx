@@ -7,7 +7,6 @@ export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false) // Mobile open/close state
   const [isCollapsed, setIsCollapsed] = useState(false) // Desktop collapse/expand state
   const { user } = useAuth() // Get user from Auth Context
-console.log('Authenticated user:', user.name) // Debugging: Log the authenticated user
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
       {/* Sidebar Menu with passed states */}
